@@ -1,27 +1,24 @@
-class Item {
-    public category: string;
+export class Item {
+    public category: "Beer" | "Cigar" | "Electronics" | "Water";
     public description: string;
     public price: number;
-    public type: "Beer" | "Cigar" | "Electronics" | "Water";
 
     constructor(
-        category: string,
+        category: "Beer" | "Cigar" | "Electronics" | "Water",
         description: string,
-        price: number,
-        type: "Beer" | "Cigar" | "Electronics" | "Water"
+        price: number
     ) {
         this.category = category;
         this.description = description;
         this.price = price;
-        this.type = type;
     }
 }
 
-class Order {
+export class Order {
     public items: Item[];
 
-    constructor(items: Item[]) {
-        this.items = items || [];
+    constructor() {
+        this.items = [];
     }
 
     public addItem(item: Item) {
@@ -37,17 +34,27 @@ class Order {
     public getTaxes() {
         let totalTaxes: number = 0;
         this.items.forEach((item) => {
-            if (item.type === "Beer") {
-                totalTaxes += item.price * 0.2;
-            } else if (item.type === "Cigar") {
-                totalTaxes += item.price * 0.25;
-            } else if (item.type === "Electronics") {
-                totalTaxes += item.price * 0.3;
-            } else if (item.type === "Water") {
+            if (item.category === "Beer") {
+                totalTaxes += new TaxItem(item).calculateTax(0.2);
+            } else if (item.category === "Cigar") {
+                totalTaxes += new TaxItem(item).calculateTax(0.25);
+            } else if (item.category === "Electronics") {
+                totalTaxes += new TaxItem(item).calculateTax(0.3);
+            } else if (item.category === "Water") {
                 totalTaxes += 0;
             }
         });
 
         return totalTaxes;
+    }
+}
+
+class TaxItem extends Item {
+    constructor(item: Item) {
+        super(item.category, item.description, item.price);
+    }
+
+    public calculateTax(tax: number) {
+        return this.price * tax;
     }
 }
